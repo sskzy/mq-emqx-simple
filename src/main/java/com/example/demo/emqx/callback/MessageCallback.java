@@ -4,6 +4,11 @@ import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
+/**
+ * @author : songtc
+ * @detail : 消息发送的回调
+ * @since : 2023/12/09 15:48
+ */
 public class MessageCallback implements MqttCallback {
     public void connectionLost(Throwable cause) {
         // 连接丢失后，一般在这里面进行重连

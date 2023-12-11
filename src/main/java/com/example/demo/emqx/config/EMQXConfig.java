@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * @author : songtc
+ * @detail : 配置类 读取和装配客户端
  * @since : 2023/12/09 14:16
  */
 @Configuration

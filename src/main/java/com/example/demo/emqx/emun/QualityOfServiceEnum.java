@@ -4,13 +4,16 @@ import lombok.Getter;
 
 /**
  * @author : songtc
+ * @detail : Qos的枚举
  * @since : 2023/12/09 14:37
  */
 @Getter
 public enum QualityOfServiceEnum {
 
     QoS0(0, "最多一次"),
+
     QoS1(1, "至少一次"),
+
     QoS2(2, "仅一次");
 
     private final Integer code;

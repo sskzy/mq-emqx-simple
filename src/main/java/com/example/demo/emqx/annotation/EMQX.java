@@ -4,11 +4,13 @@ import java.lang.annotation.*;
 
 /**
  * @author : songtc
- * @since : 2023/12/11 10:36
+ * @detail : 标记类 用于快速定位主题
+ * @since : 2023/12/11 11:27
  */
-@Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
+@Documented
+@Inherited
 public @interface EMQX {
-    String topic() default "";
+
 }
