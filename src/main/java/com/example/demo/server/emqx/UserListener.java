@@ -14,13 +14,21 @@ public class UserListener {
 
     public static final String CouponsTopic = "CouponsTopic";
 
-    @EMQXListener(topic = CouponsTopic + "/g1")
-    public void coupons1(String json) {
+    @EMQXListener(topic = CouponsTopic + "/g0/1")
+    public void coupons0(String json) {
         // 设置优惠卷到期通知逻辑
+        System.out.println(json);
     }
 
-    @EMQXListener(topic = CouponsTopic + "/g2")
+    @EMQXListener(topic = CouponsTopic + "/g1/+")
+    public void coupons1(String json) {
+        // 设置优惠卷到期通知逻辑
+        System.out.println("hello g1+");
+    }
+
+    @EMQXListener(topic = CouponsTopic + "/g2/*")
     public void coupons2(String json) {
         // 设置优惠卷到期通知逻辑
+        System.out.println("hello g2*");
     }
 }

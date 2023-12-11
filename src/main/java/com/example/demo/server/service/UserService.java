@@ -5,5 +5,8 @@ package com.example.demo.server.service;
  * @since : 2023/12/09 15:08
  */
 public interface UserService {
+    /**
+     *
+     */
     void login();
 }

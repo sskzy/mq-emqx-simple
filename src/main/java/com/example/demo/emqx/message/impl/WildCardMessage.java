@@ -10,4 +10,19 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class WildCardMessage extends AbsMessage {
+
+    @Override
+    public void sendMostOnce(String topic, String content) {
+        super.sendMostOnce(topic, content);
+    }
+
+    @Override
+    public void sendLastOnce(String topic, String content) {
+        super.sendLastOnce(topic, content);
+    }
+
+    @Override
+    public void sendOnlyOnes(String topic, String content) {
+        super.sendOnlyOnes(topic, content);
+    }
 }

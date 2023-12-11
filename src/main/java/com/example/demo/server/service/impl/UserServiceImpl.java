@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
     public void login() {
         User userInfo = getUserInfo();
         // 发送设置优惠卷到期通知信息
-        message.sendMostOnce(UserListener.CouponsTopic + "/" + userInfo.getId(),
+        message.sendMostOnce(UserListener.CouponsTopic + "/g0/" + userInfo.getId(),
                 JSONObject.toJSONString(userInfo));
     }
 
