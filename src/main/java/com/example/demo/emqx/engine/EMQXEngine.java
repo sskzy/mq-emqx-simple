@@ -16,9 +16,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -34,18 +32,11 @@ public class EMQXEngine implements ApplicationContextAware {
     MqttClient client;
     @Resource
     ApplicationContext context;
+
     /**
-     *
+     * Map<对象,Map<主题,方法>>
      */
-    private Map<String, Object> clazzs;
-    /**
-     *
-     */
-    private Map<Object, List<String>> topics = new HashMap<>();
-    /**
-     *
-     */
-    private Map<String, Method> methods = new HashMap<>();
+    private Map<Object, Map<String, Method>> clazzMap;
 
     /**
      * @param applicationContext the ApplicationContext object to be used by this object
@@ -53,20 +44,19 @@ public class EMQXEngine implements ApplicationContextAware {
      */
     @Override
     public void setApplicationContext(@NotNull ApplicationContext applicationContext) throws BeansException {
-        clazzs = context.getBeansWithAnnotation(EMQX.class);
+        clazzMap = new HashMap<>();
         //
-        for (Map.Entry<String, Object> entry : clazzs.entrySet()) {
+        for (Map.Entry<String, Object> entry : context.getBeansWithAnnotation(EMQX.class).entrySet()) {
             Class<?> clazz = entry.getValue().getClass();
-            List<String> list = new ArrayList<>();
+            Map<String, Method> map = new HashMap<>();
             try {
                 for (Method method : clazz.getDeclaredMethods()) {
                     String topic = method.getDeclaredAnnotation(EMQXListener.class).topic();
                     client.subscribe(topic);
-                    methods.put(topic, method);
-                    list.add(topic);
+                    map.put(topic, method);
 //                    log.info("Class topic item subscribe finish ({})", topic);
                 }
-                topics.put(clazz, list);
+                clazzMap.put(clazz, map);
             } catch (MqttException e) {
                 throw new RuntimeException(e);
             }
@@ -82,13 +72,13 @@ public class EMQXEngine implements ApplicationContextAware {
      * @param message
      */
     public void invokeListener(String topic, MqttMessage message) {
-        for (Map.Entry<String, Object> entry : clazzs.entrySet()) {
-            Class<?> clazz = entry.getValue().getClass();
+        for (Map.Entry<Object, Map<String, Method>> entry : clazzMap.entrySet()) {
+            Object clazz = entry.getKey();
             // compare topic value is same
-            List<Method> wildCardMethod = getWildCardMethod(clazz, topic);
+            Map<String, Method> wildCardTopics = getWildCardTopics(clazz, topic);
             try {
-                for (Method method : wildCardMethod) {
-                    method.invoke(context.getBean(clazz), new String(message.getPayload()));
+                for (Method method : wildCardTopics.values()) {
+                    method.invoke(context.getBean((Class<?>) clazz), new String(message.getPayload()));
                 }
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -100,24 +90,12 @@ public class EMQXEngine implements ApplicationContextAware {
      * @param topic
      * @return
      */
-    public List<String> getWildCardTopics(Object clazz, String topic) {
+    public Map<String, Method> getWildCardTopics(Object clazz, String topic) {
         String[] split = topic.split(MqttTopic.TOPIC_LEVEL_SEPARATOR);
-        return topics.get(clazz).stream()
-                .filter(x -> x.startsWith(split[0])) // level 1 filtration
-                .filter(x -> MqttTopic.isMatched(x, topic)) // general filtration
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * @param clazz
-     * @param topic
-     * @return
-     */
-    public List<Method> getWildCardMethod(Object clazz, String topic) {
-        List<Method> list = new ArrayList<>();
-        for (String wildCardTopic : getWildCardTopics(clazz, topic)) {
-            list.add(methods.get(wildCardTopic));
-        }
-        return list;
+        return clazzMap.get(clazz).entrySet()
+                .stream()
+                .filter(x -> x.getKey().startsWith(split[0])) // level 1 filtration
+                .filter(x -> MqttTopic.isMatched(x.getKey(), topic)) // general filtration
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 }
