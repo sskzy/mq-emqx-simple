@@ -2,6 +2,7 @@ package com.example.demo.emqx.actuator;
 
 
 import com.example.demo.emqx.emun.QualityOfServiceEnum;
+import com.example.demo.emqx.engine.EMQXEngine;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
