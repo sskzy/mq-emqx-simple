@@ -1,6 +1,6 @@
 package com.example.demo.emqx.config;
 
-import com.example.demo.emqx.callback.OnMessageCallback;
+import com.example.demo.emqx.callback.MessageCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -31,7 +31,7 @@ public class EMQXConfig {
         MemoryPersistence persistence = new MemoryPersistence();
         try {
             client = new MqttClient(broker, "clientId", persistence);
-            client.setCallback(new OnMessageCallback());
+            client.setCallback(new MessageCallback());
             client.connect(getConnectOptions());
         } catch (MqttException e) {
             e.printStackTrace();

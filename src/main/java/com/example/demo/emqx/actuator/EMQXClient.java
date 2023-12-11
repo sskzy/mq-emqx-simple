@@ -1,4 +1,4 @@
-package com.example.demo.emqx.server;
+package com.example.demo.emqx.actuator;
 
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 
 @Service
-public class MqttClientService {
+public class EMQXClient {
 
     @Resource
     private MqttClient client;

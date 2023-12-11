@@ -18,7 +18,7 @@ public class CouponsServiceImpl implements CouponsService {
     @Override
     public void login() {
         User userInfo = getUserInfo();
-        // 设置优惠卷到期通知
+        // 发送设置优惠卷到期通知信息
         MqttMessage mqttMessage = new MqttMessage();
     }
 
