@@ -1,6 +1,5 @@
-package com.example.demo.emqx.message.impl;
+package com.example.demo.emqx.message;
 
-import com.example.demo.emqx.message.TempleMessage;
 import org.springframework.stereotype.Service;
 
 /**

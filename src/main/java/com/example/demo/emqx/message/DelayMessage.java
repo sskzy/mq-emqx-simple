@@ -1,4 +1,4 @@
-package com.example.demo.emqx.message.impl;
+package com.example.demo.emqx.message;
 
 import com.example.demo.emqx.message.TempleMessage;
 import org.springframework.stereotype.Service;
@@ -17,8 +17,10 @@ public class DelayMessage extends TempleMessage {
     public static final String RETAIN_KEYWORD = "$delayed/";
 
     /**
-     * @param topic
-     * @param content
+     * 发送延迟消息
+     *
+     * @param topic     订阅主题
+     * @param content   消息内容
      * @param delayTime 单位是秒 允许的最大间隔是 4294967
      */
     public void send(String topic, String content, Long delayTime) {

@@ -18,23 +18,57 @@ public abstract class TempleMessage {
     @Resource
     private EMQXActuator actuator;
 
+    /**
+     * 发送消息
+     *
+     * @param topic   订阅主题
+     * @param message 消息体
+     */
     public void send(String topic, MqttMessage message) {
         actuator.send(topic, message, null);
     }
 
+    /**
+     * 发送消息
+     *
+     * @param topic    订阅主题
+     * @param message  消息体
+     * @param callback 回调函数
+     */
     public void send(String topic, MqttMessage message, MqttCallback callback) {
         actuator.send(topic, message, callback);
     }
 
+    /**
+     * 发送消息
+     *
+     * @param topic   订阅主题
+     * @param content 消息内容
+     */
     public void send(String topic, String content) {
         send(topic, content, QualityOfServiceEnum.QoS0, null);
     }
 
+    /**
+     * 发送消息
+     *
+     * @param topic   订阅主题
+     * @param content 消息内容
+     * @param qos     消息服务质量
+     */
     public void send(String topic, String content, QualityOfServiceEnum qos) {
         send(topic, content, qos, null);
     }
 
-    public void send(String topic, String content, QualityOfServiceEnum qos, MqttCallback mqttCallback) {
-        actuator.send(topic, qos, content, mqttCallback);
+    /**
+     * 发送消息
+     *
+     * @param topic    订阅主题
+     * @param content  消息内容
+     * @param qos      消息服务质量
+     * @param callback 回调函数
+     */
+    public void send(String topic, String content, QualityOfServiceEnum qos, MqttCallback callback) {
+        actuator.send(topic, qos, content, callback);
     }
 }

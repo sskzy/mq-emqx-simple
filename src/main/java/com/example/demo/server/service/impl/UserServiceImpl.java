@@ -1,7 +1,7 @@
 package com.example.demo.server.service.impl;
 
 import com.alibaba.fastjson2.JSONObject;
-import com.example.demo.emqx.message.impl.WildCardMessage;
+import com.example.demo.emqx.message.WildCardMessage;
 import com.example.demo.server.domain.User;
 import com.example.demo.server.emqx.UserListener;
 import com.example.demo.server.service.UserService;

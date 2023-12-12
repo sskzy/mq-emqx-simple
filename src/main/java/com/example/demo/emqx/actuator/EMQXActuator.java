@@ -12,6 +12,11 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.nio.charset.StandardCharsets;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 消息发送的执行器 创建和执行实际的消息发送
@@ -26,36 +31,46 @@ public class EMQXActuator {
     private MqttClient client;
 
     /**
-     * @param topic
-     * @param message
-     * @param mqttCallback
+     * 缓存线程池
      */
-    public void send(String topic, MqttMessage message, MqttCallback mqttCallback) {
-        try {
-            client.publish(topic, message);
-            log.info("");
-//            client.disconnect();
-//            client.close();
-        } catch (MqttException e) {
-            throw new RuntimeException(e);
-        }
+    private final ExecutorService executor = new ThreadPoolExecutor(4, 64,
+            60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
+
+
+    /**
+     * 基于发布订阅模式 往中介发送主题消息
+     *
+     * @param topic    订阅主题
+     * @param qos      消息接收的质量
+     * @param content  消息内容
+     * @param callback 回调函数
+     */
+    public void send(String topic, QualityOfServiceEnum qos, String content, MqttCallback callback) {
+        // assemble message
+        MqttMessage message = new MqttMessage(content.getBytes(StandardCharsets.UTF_8));
+        message.setQos(qos.getCode());
+        send(topic, message, callback);
     }
 
     /**
-     * @param topic
-     * @param qos
-     * @param content
+     * 基于发布订阅模式 往中介发送主题消息
+     *
+     * @param topic    订阅主题
+     * @param message  消息体
+     * @param callback 回调函数
      */
-    public void send(String topic, QualityOfServiceEnum qos, String content, MqttCallback mqttCallback) {
-        try {
-            MqttMessage message = new MqttMessage(content.getBytes());
-            message.setQos(qos.getCode());
-            client.publish(topic, message);
-            log.info("");
-//            client.disconnect();
-//            client.close();
-        } catch (MqttException e) {
-            throw new RuntimeException(e);
+    public void send(String topic, MqttMessage message, MqttCallback callback) {
+        if (callback != null) {
+            client.setCallback(callback);
         }
+        // submit task
+        executor.submit(() -> {
+            try {
+                client.publish(topic, message);
+                log.info("The client ({}) send topic ({}) message to server", client.getClientId(), topic);
+            } catch (MqttException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 }
