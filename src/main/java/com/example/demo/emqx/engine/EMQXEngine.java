@@ -2,7 +2,7 @@ package com.example.demo.emqx.engine;
 
 import com.example.demo.emqx.annotation.EMQX;
 import com.example.demo.emqx.annotation.EMQXListener;
-import com.example.demo.emqx.callback.MessageCallback;
+import com.example.demo.emqx.callback.ListenerCallback;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -52,6 +52,7 @@ public class EMQXEngine implements ApplicationContextAware {
             try {
                 for (Method method : clazz.getDeclaredMethods()) {
                     String topic = method.getDeclaredAnnotation(EMQXListener.class).topic();
+                    MqttTopic.validate(topic, true); // validate topic rules
                     client.subscribe(topic);
                     map.put(topic, method);
 //                    log.info("Class topic item subscribe finish ({})", topic);
@@ -63,7 +64,7 @@ public class EMQXEngine implements ApplicationContextAware {
 //            log.info("Class topic subscribe finish ({})", clazz.getName());
         }
         // delay set callback
-        client.setCallback(new MessageCallback(this));
+        client.setCallback(new ListenerCallback(this));
         log.info("Client all topic subscribe finish ({})", this.getClass().getName());
     }
 

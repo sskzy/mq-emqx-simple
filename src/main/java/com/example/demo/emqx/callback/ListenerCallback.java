@@ -1,49 +1,41 @@
 package com.example.demo.emqx.callback;
 
-import com.example.demo.emqx.annotation.EMQX;
-import com.example.demo.emqx.annotation.EMQXListener;
 import com.example.demo.emqx.engine.EMQXEngine;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.lang.reflect.Method;
-import java.util.Map;
 
 /**
+ * 消息发送回调 包含执行的监听器
+ *
  * @author : songtc
- * @detail : 消息发送的回调
  * @since : 2023/12/09 15:48
  */
-public class MessageCallback implements MqttCallback {
+public class ListenerCallback implements MqttCallback {
     @Resource
     EMQXEngine emqxEngine;
 
-    public MessageCallback(EMQXEngine emqxEngine) {
+    public ListenerCallback(EMQXEngine emqxEngine) {
         this.emqxEngine = emqxEngine;
     }
 
     public void connectionLost(Throwable cause) {
         // 连接丢失后，一般在这里面进行重连
-        System.out.println("songtc 连接断开 可以做重连");
+        System.out.println("conn lost");
     }
 
     /**
-     *
-     * @param topic name of the topic on the message was published to
+     * @param topic   name of the topic on the message was published to
      * @param message the actual message.
      */
     public void messageArrived(String topic, MqttMessage message) {
-        // 调用@Listener注解对应方法
+        // invoke @Listener mapping method
         emqxEngine.invokeListener(topic, message);
     }
 
     public void deliveryComplete(IMqttDeliveryToken token) {
-        System.out.println("iMqttDeliveryToken: " + token.isComplete());
+        System.out.println("callback complete: " + token.isComplete());
     }
 }
