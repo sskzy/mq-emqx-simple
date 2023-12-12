@@ -29,12 +29,6 @@ public class EMQXConfig {
     @Value("${emqx.broker}")
     private String broker;
 
-    @Value("${emqx.username}")
-    private String username;
-
-    @Value("${emqx.password}")
-    private String password;
-
     @Bean
     public MqttClient mqttClient() {
         MqttClient client = null;
@@ -48,6 +42,15 @@ public class EMQXConfig {
         }
         return client;
     }
+
+    @Value("${emqx.username}")
+    private String username;
+
+    @Value("${emqx.password}")
+    private String password;
+
+    @Value("${emqx.cleanSession}")
+    private Boolean cleanSession;
 
     @Resource
     private WillMessage willMessage;
@@ -66,7 +69,7 @@ public class EMQXConfig {
                     willMessage.getRetained());
             log.info("The client ({}) set topic({}) will message", clientId, willMessage.getTopic());
         }
-        connOpts.setCleanSession(true);
+        connOpts.setCleanSession(cleanSession);
         return connOpts;
     }
 }

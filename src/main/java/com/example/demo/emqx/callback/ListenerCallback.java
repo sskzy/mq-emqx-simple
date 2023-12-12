@@ -22,8 +22,8 @@ public class ListenerCallback implements MqttCallback {
     }
 
     public void connectionLost(Throwable cause) {
-        // 连接丢失后，一般在这里面进行重连
-        System.out.println("conn lost");
+        // 连接丢失后 一般在这里面进行重连
+        System.out.println("conn reload");
     }
 
     /**
