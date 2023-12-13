@@ -76,7 +76,7 @@ docker run -d --name emqx -p 1883:1883 -p 8083:8083 -p 8084:8084 -p 8883:8883 -p
   @Service
   public class UserServiceImpl implements UserService {
   
-   	@Resource
+   	  @Resource
       DelayMessage delayMessage;
   
       @Override
@@ -94,6 +94,7 @@ docker run -d --name emqx -p 1883:1883 -p 8083:8083 -p 8084:8084 -p 8883:8883 -p
   ```java
   @Configuration
   public class WillConfig {
+  
       @Bean
       public WillMessage willMessage() {
           WillMessage willMessage = new WillMessage();
