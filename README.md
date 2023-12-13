@@ -37,6 +37,7 @@ docker run -d --name emqx -p 1883:1883 -p 8083:8083 -p 8084:8084 -p 8883:8883 -p
   @EMQX
   @Component
   public class UserListener {
+  
       public static final String CouponsTopic = "CouponsTopic";
   
       @EMQXListener(topic = CouponsTopic + "/g0/1")
@@ -76,7 +77,7 @@ docker run -d --name emqx -p 1883:1883 -p 8083:8083 -p 8084:8084 -p 8883:8883 -p
   @Service
   public class UserServiceImpl implements UserService {
   
-   	  @Resource
+      @Resource
       DelayMessage delayMessage;
   
       @Override
